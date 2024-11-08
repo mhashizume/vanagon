@@ -32,6 +32,10 @@ class Vanagon
             return github_remote?(url) if url.to_s.start_with?(github_url_prefix)
 
             begin
+              # We are encountering an issue validating repos with `git ls-remote`.
+              # This is a hacky workaround. See: RE-16671
+              Vanagon::Utilities.local_command('ssh-keyscan github.com &> ~/.ssh/known_hosts')
+
               # [RE-13837] there's a bug in Git.ls_remote that when ssh prints something like
               #  Warning: Permanently added 'github.com,192.30.255.113' (RSA)
               # Git.ls_remote attempts to parse it as actual git output and fails
